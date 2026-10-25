@@ -509,6 +509,11 @@ code {
 .result .rt { font-size: 14px; color: var(--brand-strong); font-weight: 600; margin-bottom: 3px; }
 .result:hover .rt { text-decoration: underline; }
 .result .rs { font-size: 12.5px; color: var(--text-dim); line-height: 1.55; }
+
+/* Nothing to open: read as text, not as a link that ignores you. */
+.result.inert { cursor: default; }
+.result.inert .rt { color: var(--text); }
+.result.inert:hover .rt { text-decoration: none; }
 .ix-empty { padding: 18px 0; font-size: 13px; color: var(--text-dim); }
 
 .linkrow {

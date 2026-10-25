@@ -118,11 +118,18 @@ and no access to withdraw after the customer goes live.
 That companion application is not in this repository. Out of the box the integration page shows
 the index and explains the arrangement rather than opening a dead tab.
 
-To wire it up on your own machine, run this in the browser console:
+To wire it up on your own machine, add `?portal=` to the URL once:
 
-```js
-setPortal('../your-docs-app/index.html')   // setPortal(null) clears it
 ```
+http://localhost:8780/onboarding-data-room/?portal=../your-docs-app/index.html
+```
+
+The value is stored and the parameter stripped from the address bar. There is a console
+equivalent if you prefer: `setPortal('../your-docs-app/index.html')`, and `setPortal(null)`
+clears it. Only paths relative to the page are accepted, so a shared link cannot aim the button
+at some other origin.
+
+Until it is set, the index entries render as plain headings rather than as links that ignore you.
 
 It is stored in `localStorage`, so it survives reloads, stays out of git, and cannot be
 committed by accident. `PORTAL.base` in `assets/app.js` is the committed default and is

@@ -40,18 +40,48 @@ var PORTAL = {
   token: 'dataroom'
 };
 
-/* Resolved on every call rather than at load, so the console helper takes
+/* Resolved on every call rather than at load, so the helpers below take
    effect without a reload. The stored value wins over the committed one. */
 function portalBase() {
   var local = recall('portalBase', null);
   return (local === null || local === '') ? PORTAL.base : local;
 }
 
+/* Only a relative path. Refusing a scheme or a protocol-relative path keeps
+   ?portal= from being a way to aim the button at an arbitrary origin, which
+   matters because the parameter is shareable and the room is public. */
+function portalAllowed(base) {
+  var b = String(base);
+  if (/^[a-z][a-z0-9+.-]*:/i.test(b)) return false;
+  if (b.indexOf('//') === 0) return false;
+  return true;
+}
+
 function setPortal(base) {
-  if (base === null || base === '' || base === undefined) forget('portalBase');
-  else store('portalBase', String(base));
+  if (base === null || base === '' || base === undefined) { forget('portalBase'); }
+  else if (!portalAllowed(base)) {
+    return 'refused: give a path relative to this page, not a full URL';
+  } else {
+    store('portalBase', String(base));
+  }
   if (state.page === 'integration') go('integration', true);
   return portalBase() || '(not configured)';
+}
+
+/* ?portal=../some/path on the URL does the same thing, so wiring up a local
+   copy is a link to click rather than a trip into the console. The value is
+   stored and the parameter stripped, so it does not linger in the address
+   bar or get copied into a share. */
+function portalFromUrl() {
+  var m = /[?&]portal=([^&#]*)/.exec(location.search);
+  if (!m) return;
+  var want = decodeURIComponent(m[1]);
+  if (want && portalAllowed(want)) store('portalBase', want);
+  else if (!want) forget('portalBase');
+  if (history.replaceState) {
+    var clean = location.search.replace(/([?&])portal=[^&#]*&?/, '$1').replace(/[?&]$/, '');
+    history.replaceState({}, '', location.pathname + clean + location.hash);
+  }
 }
 
 function portalLinked() { return !!portalBase(); }
@@ -842,8 +872,11 @@ VIEWS.integration = function () {
   html += '<div class="card" style="padding:4px 20px">' +
     (hits.length
       ? hits.map(function (r) {
-          return '<div class="result"' +
-            (portalLinked() ? ' onclick="openPortal(\'' + r.page + '\')"' : ' style="cursor:default"') +
+          /* Without somewhere to send them these are not links, so they
+             must not look like links. `inert` drops the accent colour and
+             the hover underline as well as the pointer. */
+          return '<div class="result' + (portalLinked() ? '' : ' inert') + '"' +
+            (portalLinked() ? ' onclick="openPortal(\'' + r.page + '\')"' : '') +
             '><div class="rt">' + esc(r.title) + '</div>' +
             '<div class="rs">' + esc(r.blurb) + '</div></div>';
         }).join('')
@@ -1132,6 +1165,7 @@ function reopenRoom() {
    BOOT
    ══════════════════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', function () {
+  portalFromUrl();
   renderAuthAside();
   renderDemoList();
 
