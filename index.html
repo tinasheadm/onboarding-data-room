@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Financial Connect Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css?v=1.1.0">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     SIGN IN
+     The front door to the whole room. Email, then a six digit code.
+     There is no password and nothing to create.
+     ══════════════════════════════════════════════════════════════════════ -->
+<div id="auth" class="auth">
+  <div class="auth-panel">
+    <div class="auth-form">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M8 4h18v6h-11v5h9v6h-9v7H8V4z" fill="#fff"/></svg>
+      </div>
+
+      <!-- step 1: who are you -->
+      <section id="step-email">
+        <h1>Your onboarding with Financial Connect</h1>
+        <p class="auth-sub">Enter the email address your invitation was sent to. We will send you a
+          six digit code.</p>
+
+        <label class="auth-l" for="email">Email address</label>
+        <input class="auth-in" id="email" type="email" autocomplete="email"
+               placeholder="you@yourcompany.com" spellcheck="false">
+        <div class="auth-err" id="email-err" hidden></div>
+        <button class="auth-btn" id="send-code">Send me a code</button>
+
+        <div class="auth-note">
+          <strong>No account to create.</strong> Access lasts as long as your onboarding is open,
+          and your session lasts a day.
+        </div>
+
+        <div class="auth-demo">
+          <div class="auth-demo-h">Demonstration. Sign in as any of these</div>
+          <div id="demo-list"></div>
+        </div>
+      </section>
+
+      <!-- step 2: prove it -->
+      <section id="step-code" hidden>
+        <h1>Enter your code</h1>
+        <p class="auth-sub">We sent a six digit code to <strong id="code-to"></strong></p>
+
+        <div class="code" id="code-boxes"></div>
+        <div class="auth-err" id="code-err" hidden></div>
+
+        <div class="code-foot">
+          <span id="code-expiry"></span>
+          <button class="auth-link" id="resend" type="button"></button>
+        </div>
+
+        <button class="auth-btn" id="verify">Verify and continue</button>
+        <button class="auth-link back" id="back-to-email" type="button">&larr; Use a different address</button>
+
+        <div class="auth-note demo">Demonstration: any six digits are accepted.</div>
+      </section>
+    </div>
+
+    <aside class="auth-aside">
+      <div class="brand-wordmark">
+        <div class="brand-mark small" aria-hidden="true">
+          <svg viewBox="0 0 32 32"><path d="M8 4h18v6h-11v5h9v6h-9v7H8V4z" fill="#fff"/></svg>
+        </div>
+        <div><b>FINANCIAL</b><span>CONNECT</span></div>
+      </div>
+      <h2>Everything your launch needs, in one room.</h2>
+      <p>Your documents, your checklist and the people working on it, with the integration
+        documentation alongside.</p>
+      <ul class="auth-points" id="auth-points"></ul>
+    </aside>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     THE ROOM
+     ══════════════════════════════════════════════════════════════════════ -->
+<div id="app" hidden>
+  <header class="topbar">
+    <button class="nav-toggle" id="nav-toggle" onclick="toggleNav()"
+            aria-label="Open navigation" aria-expanded="false" aria-controls="sidenav">
+      <span></span><span></span><span></span>
+    </button>
+
+    <a class="brand" href="#home" onclick="go('home');return false;" aria-label="Financial Connect onboarding, home">
+      <div class="brand-mark small" aria-hidden="true">
+        <svg viewBox="0 0 32 32"><path d="M8 4h18v6h-11v5h9v6h-9v7H8V4z" fill="#fff"/></svg>
+      </div>
+      <span class="brand-room" id="brand-room"></span>
+    </a>
+
+    <div class="topbar-right">
+      <div class="whoami" id="whoami"></div>
+      <button class="icon-only" id="signout" onclick="signOut()" title="Sign out"
+              aria-label="Sign out">&#x23FB;</button>
+    </div>
+  </header>
+
+  <div class="shell">
+    <div class="nav-scrim" id="nav-scrim" onclick="toggleNav(false)"></div>
+    <aside class="sidenav" id="sidenav">
+      <div class="sidenav-scroll" id="nav"></div>
+    </aside>
+    <main class="main">
+      <div class="page" id="page-host"></div>
+    </main>
+  </div>
+</div>
+
+<script src="assets/data.js?v=1.1.0"></script>
+<script src="assets/app.js?v=1.1.0"></script>
+</body>
+</html>
