@@ -116,16 +116,17 @@ It does not hold a copy, which is the point: one source, two front doors, nothin
 and no access to withdraw after the customer goes live.
 
 That companion application is not in this repository. Out of the box the integration page shows
-the index and explains the arrangement rather than opening a dead tab. To wire it up, set one
-line in `assets/app.js`:
+the index and explains the arrangement rather than opening a dead tab.
+
+To wire it up on your own machine, run this in the browser console:
 
 ```js
-var PORTAL = {
-  base: '../your-docs-app/index.html',   // empty means not configured
-  param: 'from',
-  token: 'dataroom'
-};
+setPortal('../your-docs-app/index.html')   // setPortal(null) clears it
 ```
+
+It is stored in `localStorage`, so it survives reloads, stays out of git, and cannot be
+committed by accident. `PORTAL.base` in `assets/app.js` is the committed default and is
+deliberately empty; the stored value wins over it.
 
 The room signs the reader in at its own front door, so the query parameter tells the guide not to
 ask a second time for one journey. **That parameter is a demonstration seam, not an

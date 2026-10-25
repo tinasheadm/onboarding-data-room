@@ -13,12 +13,22 @@
 
 /* ── Where the integration guide lives ─────────────────────────────────────
    The integration guide is a separate application. This room indexes it and
-   links out; it does not contain it. Set `base` to wherever that application
-   is served and the links below come alive.
+   links out; it does not contain it.
 
-   Left empty, the integration page still shows the index and explains that
-   the guide is a companion application, rather than opening a dead tab. That
-   is the right default for anybody who has cloned this on its own.
+   `base` is empty here and should stay empty in the repository, because a
+   clone has no companion application to point at. Unset, the integration
+   page shows its index and explains the arrangement rather than opening a
+   dead tab.
+
+   To wire it up on your own machine, do it from the console rather than by
+   editing this line:
+
+       setPortal('../your-docs-app/index.html')
+
+   That keeps the setting in localStorage, where it survives a reload, stays
+   out of git, and cannot be committed by accident. `setPortal(null)` clears
+   it. Editing `base` directly works too, but it leaves this file dirty and
+   one absent-minded `git add -A` publishes a dead link.
 
    `param` and `token` tell the guide the reader already signed in here, so
    they are not asked twice for one journey. It is a demonstration seam, not
@@ -30,11 +40,25 @@ var PORTAL = {
   token: 'dataroom'
 };
 
-function portalLinked() { return !!PORTAL.base; }
+/* Resolved on every call rather than at load, so the console helper takes
+   effect without a reload. The stored value wins over the committed one. */
+function portalBase() {
+  var local = recall('portalBase', null);
+  return (local === null || local === '') ? PORTAL.base : local;
+}
+
+function setPortal(base) {
+  if (base === null || base === '' || base === undefined) forget('portalBase');
+  else store('portalBase', String(base));
+  if (state.page === 'integration') go('integration', true);
+  return portalBase() || '(not configured)';
+}
+
+function portalLinked() { return !!portalBase(); }
 
 function portalUrl(page) {
   if (!portalLinked()) return '';
-  return PORTAL.base + '?' + PORTAL.param + '=' + PORTAL.token + (page ? '#' + page : '');
+  return portalBase() + '?' + PORTAL.param + '=' + PORTAL.token + (page ? '#' + page : '');
 }
 
 /* ── Storage ───────────────────────────────────────────────────────────────
